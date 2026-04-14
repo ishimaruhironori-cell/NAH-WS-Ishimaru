@@ -23,7 +23,7 @@ jobs:
       - name: GCP 認証情報をファイルに書き出す
         env:
           GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
-        run: printf '%s' "$GCP_CREDENTIALS" > /tmp/gcp-credentials.json
+        run: python3 -c "import os; open('/tmp/gcp-credentials.json','w').write(os.environ['GCP_CREDENTIALS'])"
 
       - name: Slack 締め報告を投稿
         env:
