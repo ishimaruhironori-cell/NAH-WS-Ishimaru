@@ -21,7 +21,9 @@ jobs:
         run: pip install -r projects/daily_report/requirements.txt
 
       - name: GCP 認証情報をファイルに書き出す
-        run: echo '${{ secrets.GCP_CREDENTIALS }}' > /tmp/gcp-credentials.json
+        env:
+          GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
+        run: printf '%s' "$GCP_CREDENTIALS" > /tmp/gcp-credentials.json
 
       - name: Slack 締め報告を投稿
         env:
