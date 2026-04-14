@@ -1,0 +1,30 @@
+name: IS 締め報告 Slack 自動投稿
+
+on:
+  schedule:
+    # 毎日 19:00 JST (= 10:00 UTC) に実行
+    - cron: "0 10 * * 1-5"
+  workflow_dispatch: # 手動実行ボタン（テスト用）
+
+jobs:
+  post-report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Python セットアップ
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 依存ライブラリのインストール
+        run: pip install -r projects/daily_report/requirements.txt
+
+      - name: GCP 認証情報をファイルに書き出す
+        run: echo '${{ secrets.GCP_CREDENTIALS }}' > /tmp/gcp-credentials.json
+
+      - name: Slack 締め報告を投稿
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          GOOGLE_APPLICATION_CREDENTIALS: /tmp/gcp-credentials.json
+        run: python projects/daily_report/slack_report.py
